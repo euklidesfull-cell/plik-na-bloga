@@ -1,21 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="100%" height="100%">
-  <style>
-    .math-ring { fill: none; stroke: #f1f5f9; stroke-width: 2; }
-    .math-dashed { fill: none; stroke: #3b82f6; stroke-width: 3; stroke-dasharray: 6 8; transform-origin: 80px 80px; animation: rotateClockwise 12s linear infinite; }
-    .math-square { fill: none; stroke: #f59e0b; stroke-width: 3; transform-origin: 80px 80px; animation: rotateCounter 8s linear infinite; }
-    .math-triangle { fill: rgba(16, 185, 129, 0.15); stroke: #10b981; stroke-width: 3; stroke-linejoin: round; transform-origin: 80px 81px; animation: gentlePulse 3s ease-in-out infinite; }
-    .math-char { font-family: 'Arial Rounded MT Bold', sans-serif; font-size: 22px; font-weight: bold; }
-    .char-1 { fill: #ec4899; transform-origin: 35px 50px; animation: floatEffect 4s ease-in-out infinite; }
-    .char-2 { fill: #8b5cf6; transform-origin: 120px 120px; animation: floatEffect 4s ease-in-out infinite; animation-delay: -2s; }
-    @keyframes rotateClockwise { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes rotateCounter { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
-    @keyframes gentlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-    @keyframes floatEffect { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-  </style>
-  <circle cx="80" cy="80" r="65" class="math-ring" />
-  <circle cx="80" cy="80" r="50" class="math-dashed" />
-  <rect x="55" y="55" width="50" height="50" rx="6" class="math-square" />
-  <polygon points="80,60 100,95 60,95" class="math-triangle" />
-  <text x="35" y="50" class="math-char char-1">+</text>
-  <text x="120" y="120" class="math-char char-2">=</text>
+  <!-- Definicja siatki matematycznej w tle -->
+  <defs>
+    <pattern id="math-grid" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M 16 0 L 0 0 0 16" fill="none" stroke="rgba(203, 213, 225, 0.25)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Jasnoszare, techniczne tło projektowe (kratka zeszytu) -->
+  <rect width="100%" height="100%" fill="#f8fafc" />
+  <rect width="100%" height="100%" fill="url(#math-grid)" />
+  
+  <!-- Cienki, techniczny okrąg konstrukcyjny w tle -->
+  <circle cx="80" cy="80" r="72" fill="none" stroke="rgba(203, 213, 225, 0.15)" stroke-width="1" stroke-dasharray="2 4" />
+  
+  <!-- Statyczny okrąg pomocniczy -->
+  <circle cx="80" cy="80" r="65" fill="none" stroke="rgba(203, 213, 225, 0.4)" stroke-width="1.5" />
+  
+  <!-- GŁÓWNE FIGURY GEOMETRYCZNE (Z KLASAMI DLA SILNIKA GSAP) -->
+  <!-- Niebieski przerywany okrąg kręcący się w prawo -->
+  <circle cx="80" cy="80" r="50" class="gsap-rotate-cw" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-dasharray="5 7" />
+  
+  <!-- Pomarańczowy kwadrat kręcący się w lewo i pulsujący -->
+  <rect x="55" y="55" width="50" height="50" rx="6" class="gsap-pulse-rotate" fill="none" stroke="#f59e0b" stroke-width="2.5" />
+  
+  <!-- Zielony trójkąt pływający góra-dół -->
+  <polygon points="80,60 100,95 60,95" class="gsap-float-y" fill="rgba(16, 185, 129, 0.1)" stroke="#10b981" stroke-width="2.5" stroke-linejoin="round" />
+  
+  <!-- LEWITUJĄCE SYMBOLE MATEMATYCZNE -->
+  <!-- Różowy plus (lewitacja 1) -->
+  <text x="35" y="50" class="gsap-bounce-1" font-family="'Arial Rounded MT Bold', 'Arial', sans-serif" font-size="20" font-weight="bold" fill="#ec4899" text-anchor="middle">+</text>
+  
+  <!-- Fioletowy znak równości (lewitacja 2) -->
+  <text x="120" y="120" class="gsap-bounce-2" font-family="'Arial Rounded MT Bold', 'Arial', sans-serif" font-size="20" font-weight="bold" fill="#8b5cf6" text-anchor="middle">=</text>
 </svg>
