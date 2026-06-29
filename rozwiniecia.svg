@@ -7,7 +7,7 @@
   </defs>
   
   <!-- Jasnoszare, techniczne tło projektowe (kratka zeszytu) -->
-  <rect width="100%" height="100%" fill="#008000" />
+  <rect width="100%" height="100%" fill="#A52A2A" />
   <rect width="100%" height="100%" fill="url(#math-grid)" />
   
   <!-- DELIKATNE OSIE UKŁADU WSPÓŁRZĘDNYCH W TLE -->
