@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zadanie 6</title>
+  
+  <!-- Polskie czcionki i MathJax wewnątrz ramki -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 10px;
+      background-color: transparent;
+      font-family: 'Georgia', serif;
+    }
+
+    .cke-arkusz-z6 {
+      font-family: 'Georgia', serif;
+      color: #2c3e50;
+      position: relative;
+    }
+
+    .z6-naglowek-belka {
+      background-color: #d0e9d6 !important;
+      color: #1a1a1a !important;
+      padding: 12px 20px !important;
+      font-size: 1.25em !important;
+      font-weight: bold !important;
+      border-radius: 4px !important;
+      margin-bottom: 20px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      display: block;
+      font-family: Arial, sans-serif;
+    }
+
+    .z6-teoria-pudlo {
+      background-color: #f9fbf9;
+      border-left: 4px solid #27ae60;
+      padding: 20px;
+      margin-bottom: 25px;
+      border-radius: 0 6px 6px 0;
+      line-height: 1.6;
+      font-size: 0.95em;
+    }
+
+    .z6-teoria-pudlo h3 {
+      margin-top: 0;
+      color: #007a3d;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 12px;
+      font-family: Arial, sans-serif;
+    }
+
+    .z6-word-toolbar {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 5px;
+      z-index: 1000;
+      background-color: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .z6-toolbar-header {
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #334155;
+      letter-spacing: 0.8px;
+      border-bottom: 1px solid #cbd5e1;
+      padding-bottom: 5px;
+      margin-bottom: 2px;
+    }
+
+    .z6-toolbar-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .z6-toolbar-group {
+      display: flex;
+      gap: 5px;
+      border-right: 1.5px solid #cbd5e1;
+      padding-right: 10px;
+      margin-right: 5px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .z6-toolbar-group:last-child {
+      border-right: none;
+      padding-right: 0;
+      margin-right: 0;
+    }
+
+    .z6-toolbar-label {
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      font-weight: bold;
+      color: #475569;
+      margin-right: 4px;
+      text-transform: uppercase;
+    }
+
+    .z6-word-btn {
+      background-color: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 5px;
+      color: #0f172a;
+      font-size: 1em;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 34px;
+      user-select: none;
+    }
+
+    .z6-word-btn:hover {
+      background-color: #e2e8f0;
+      border-color: #475569;
+      transform: translateY(-1px);
+    }
+
+    .z6-math-style, 
+    .z6-math-editable,
+    .z6-math-italic {
+      font-family: 'MathJax_Main', 'Times New Roman', 'Georgia', serif !important;
+      font-weight: normal !important;
+    }
+
+    .z6-math-italic {
+      font-style: italic !important;
+    }
+
+    .z6-btn-frac-icon {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.75em;
+      line-height: 1;
+    }
+    .z6-btn-frac-line {
+      border-top: 1.5px solid #000;
+      width: 12px;
+      height: 1px;
+      margin: 1px 0;
+    }
+
+    .z6-btn-control {
+      font-family: Arial, sans-serif !important;
+      font-size: 0.85em;
+      font-weight: bold;
+    }
+
+    .z6-btn-clear {
+      background-color: #fef2f2;
+      color: #991b1b;
+      border-color: #fee2e2;
+    }
+    .z6-btn-clear:hover {
+      background-color: #fee2e2;
+      border-color: #fca5a5;
+      color: #7f1d1d;
+    }
+
+    .z6-container {
+      width: 100%;
+      margin-bottom: 25px;
+      background-color: #ffffff;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .z6-exercise-sheet {
+      font-family: 'Georgia', serif;
+      font-size: 1.05em;
+      line-height: 1.8;
+      color: #2c3e50;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      background-color: #fafbfd;
+      padding: 25px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .z6-title-original {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-bottom: 25px;
+      color: #1a1a1a;
+    }
+
+    .z6-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+      .z6-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .z6-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      justify-content: space-between;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .z6-card.active-card {
+      border-color: #007a3d !important;
+      box-shadow: 0 4px 15px rgba(0, 122, 61, 0.08);
+    }
+
+    .z6-expression-box {
+      display: block;
+      font-size: 1.05em;
+      color: #1a1a1a;
+      margin-bottom: 15px;
+      line-height: 1.7;
+      border-bottom: 1px dashed #e2e8f0;
+      padding-bottom: 12px;
+    }
+
+    .z6-input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 1em;
+    }
+
+    .z6-input-label {
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      color: #007a3d;
+    }
+
+    .z6-math-editable {
+      display: inline-flex;
+      align-items: center;
+      min-width: 180px;
+      min-height: 42px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      background-color: #ffffff;
+      padding: 4px 10px;
+      font-size: 1.15em;
+      color: #1e293b;
+      box-sizing: border-box;
+      outline: none;
+      transition: all 0.15s ease-in-out;
+      vertical-align: middle;
+      cursor: text;
+    }
+
+    .z6-math-editable:focus-within {
+      border-color: #007a3d !important;
+      background-color: #f8fafc;
+    }
+
+    .z6-math-editable.correct-input {
+      border-color: #27ae60 !important;
+      background-color: #e8f5e9 !important;
+      box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.15) !important;
+      color: #27ae60 !important;
+    }
+
+    .z6-math-editable.incorrect-input {
+      border-color: #c0392b !important;
+      background-color: #ffebee !important;
+      box-shadow: 0 0 0 2px rgba(192, 57, 43, 0.15) !important;
+      color: #c0392b !important;
+    }
+
+    .cke-przyciski-z6 {
+      margin-top: 25px;
+      margin-bottom: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .cke-btn-z6 {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 0.95em;
+      font-weight: bold;
+      text-align: center;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      background-color: #e0e0e0;
+      color: #333333;
+      font-family: Arial, sans-serif;
+    }
+    
+    .cke-btn-z6:hover {
+      background-color: #d5d5d5;
+    }
+    
+    .cke-btn-blue-z6 {
+      background-color: #007a3d !important;
+      color: #ffffff !important;
+    }
+    
+    .cke-feedback-z6 {
+      display: inline-block;
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 1em;
+      width: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    .z6-cke-instrukcja-pudlo {
+      background-color: #f4f6f8;
+      border-left: 4px solid #007a3d;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border-radius: 0 4px 4px 0;
+      font-size: 0.95em;
+      line-height: 1.45;
+      font-family: Arial, sans-serif;
+    }
+
+    .z6-solution-box {
+      display: none;
+      padding: 15px;
+      margin-top: 20px;
+      background-color: #f9f9f9;
+      border-left: 4px solid #007a3d;
+      border-radius: 4px;
+    }
+
+    .math-widget {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 4px;
+    }
+
+    .math-widget-mixed {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .math-widget-whole {
+      display: inline-block;
+      min-width: 16px;
+      padding: 0 3px;
+      text-align: center;
+      outline: none;
+      cursor: text;
+    }
+
+    .math-widget-frac {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      padding: 0 4px;
+      position: relative;
+    }
+
+    .math-widget-num,
+    .math-widget-den {
+      display: inline-block;
+      min-width: 20px;
+      text-align: center;
+      outline: none;
+      padding: 0 2px;
+      font-size: 0.9em;
+      cursor: text;
+    }
+
+    .math-widget-line {
+      display: block;
+      width: 100%;
+      height: 1.5px;
+      background-color: #2c3e50;
+      margin: 2px 0;
+    }
+
+    .z6-math-editable [contenteditable="true"]:empty::before {
+      content: attr(placeholder);
+      color: #94a3b8;
+      font-size: 0.8em;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<div class="cke-arkusz-z6 tex2jax_ignore mathjax_ignore">
+  <div class="z6-naglowek-belka">Zadanie 6</div>
+  
+  <div class="z6-teoria-pudlo">
+    <h3>Wstęp teoretyczny: Układanie równań kwadratowych i ich redukcja</h3>
+    <p>Aby rozwiązać zadanie geometryczne, w którym pole figury wyrażone jest za pomocą niewiadomej \(x\):</p>
+    <ul>
+      <li>Stosujemy odpowiedni wzór na pole danej figury (trójkąta, prostokąta lub trapezu).</li>
+      <li>Porównujemy otrzymane wyrażenie z podaną wartością pola (w tym przypadku \(x^2\)).</li>
+      <li>Upraszczamy i rozwiązujemy powstałe równanie. Choć w obliczeniach pojawia się wyrażenie kwadratowe \(x^2\), po przeniesieniu wyrazów na jedną stronę ulega ono redukcji, dając proste równanie liniowe z jedną niewiadomą.</li>
+    </ul>
+  </div>
+
+  <div class="z6-cke-instrukcja-pudlo">
+    <strong>Instrukcja wprowadzania odpowiedzi:</strong><br>
+    • Kliknij dowolne pole tekstowe odpowiedzi (obszar uaktywni się zieloną ramką).<br>
+    • <strong>Struktury złożone</strong>: Klikaj odpowiednie ikony struktur (ułamek, liczba mieszana) na paski narzędzi, aby wstawić je do aktywnego pola, a następnie uzupełniaj puste okienka.<br>
+    • Przejście między polami struktur jest możliwe za pomocą myszki lub strzałek na klawiaturze.
+  </div>
+
+  <!-- PANEL EDYTORA WYSIWYG -->
+  <div class="z6-word-toolbar">
+    <div class="z6-toolbar-header">Narzędzia równań — Projektowanie.</div>
+    <div class="z6-toolbar-row">
+      <div class="z6-toolbar-group">
+        <span class="z6-toolbar-label">Struktury:</span>
+        <button type="button" class="z6-word-btn z6-btn-frac" title="Ułamek zwykły">
+          <span class="z6-btn-frac-icon z6-math-style">
+            <span>■</span>
+            <span class="z6-btn-frac-line"></span>
+            <span>■</span>
+          </span>
+        </button>
+        <button type="button" class="z6-word-btn z6-btn-mixed" title="Liczba mieszana">
+          <span class="z6-math-style" style="font-size:0.85em; display:inline-flex; align-items:center;">
+            ■
+            <span class="z6-btn-frac-icon" style="margin-left: 2px;">
+              <span>■</span>
+              <span class="z6-btn-frac-line" style="width: 8px;"></span>
+              <span>■</span>
+            </span>
+          </span>
+        </button>
+      </div>
+
+      <div class="z6-toolbar-group">
+        <span class="z6-toolbar-label">Symbole:</span>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">+</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">&minus;</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">,</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">1</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">2</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">3</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">4</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">5</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">6</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">7</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">8</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">9</button>
+        <button type="button" class="z6-word-btn z6-math-style z6-symbol-btn">0</button>
+      </div>
+
+      <div class="z6-toolbar-group">
+        <button type="button" class="z6-word-btn z6-btn-control z6-btn-clear">Wyczyść pole</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="z6-container">
+    <div class="z6-exercise-sheet">
+      <div class="z6-title-original tex2jax_process mathjax_process">Pole narysowanej figury jest równe \( x^2 \). Ułóż i rozwiąż odpowiednie równanie.</div>
+      
+      <div class="z6-grid">
+        <div class="z6-card z6-card-a">
+          <div class="z6-expression-box tex2jax_process mathjax_process"><strong>a)</strong> Trójkąt prostokątny o bokach \( x+5 \) oraz \( 2x-4 \)</div>
+          <div class="z6-input-row">
+            <span class="z6-input-label">Wynik:</span>
+            <span class="z6-math-italic">x <span class="z6-math-style">=</span></span>
+            <div class="z6-math-editable" contenteditable="true" placeholder="Wpisz wynik"></div>
+          </div>
+        </div>
+
+        <div class="z6-card z6-card-b">
+          <div class="z6-expression-box tex2jax_process mathjax_process"><strong>b)</strong> Prostokąt o bokach \( x-2 \) oraz \( x+10 \)</div>
+          <div class="z6-input-row">
+            <span class="z6-input-label">Wynik:</span>
+            <span class="z6-math-italic">x <span class="z6-math-style">=</span></span>
+            <div class="z6-math-editable" contenteditable="true" placeholder="Wpisz wynik"></div>
+          </div>
+        </div>
+
+        <div class="z6-card z6-card-c">
+          <div class="z6-expression-box tex2jax_process mathjax_process"><strong>c)</strong> Trapez o podstawach \( 10 \), \( x+2 + x-7 \) oraz wysokości \( x-2 \)</div>
+          <div class="z6-input-row">
+            <span class="z6-input-label">Wynik:</span>
+            <span class="z6-math-italic">x <span class="z6-math-style">=</span></span>
+            <div class="z6-math-editable" contenteditable="true" placeholder="Wpisz wynik"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cke-przyciski-z6">
+    <button class="cke-btn-z6 cke-btn-blue-z6">Sprawdź wyniki</button>
+    <button class="cke-btn-z6 z6-btn-sol">Pokaż wyjaśnienie krok po kroku</button>
+    <div class="cke-feedback-z6"></div>
+  </div>
+
+  <!-- ROZWIĄZANIA KROK PO KROKU ZADANIA 6 -->
+  <div class="z6-solution-box" style="display: none; padding: 15px; margin-top: 20px; background-color: #f9f9f9; border-left: 4px solid #007a3d; border-radius: 4px;">
+    <h4 style="margin-top: 15px; color: #2c3e50; font-family: Arial, sans-serif;">Rozwiązanie zadań i analiza krok po kroku:</h4>
+    <div class="tex2jax_process mathjax_process" style="font-size: 0.95em; line-height: 1.7; padding-bottom: 15px;">
+      
+      <h5 style="color: #007a3d; margin-bottom: 5px; margin-top: 10px;">Podpunkt a)</h5>
+      <p>Wzór na pole trójkąta prostokątnego:<br>
+      \( P = \frac{1}{2} \cdot a \cdot b = \frac{1}{2} \cdot (x + 5) \cdot (2x - 4) \)<br>
+      Upraszczamy wyrażenie:<br>
+      \( P = (x + 5) \cdot (x - 2) = x^2 - 2x + 5x - 10 = x^2 + 3x - 10 \)<br>
+      Porównujemy z wartością \( x^2 \):<br>
+      \( x^2 + 3x - 10 = x^2 \implies 3x - 10 = 0 \implies 3x = 10 \implies x = \frac{10}{3} = 3\frac{1}{3} \).</p>
+
+      <h5 style="color: #007a3d; margin-bottom: 5px; margin-top: 15px;">Podpunkt b)</h5>
+      <p>Wzór na pole prostokąta:<br>
+      \( P = a \cdot b = (x - 2) \cdot (x + 10) \)<br>
+      Upraszczamy wyrażenie:<br>
+      \( P = x^2 + 10x - 2x - 20 = x^2 + 8x - 20 \)<br>
+      Porównujemy z wartością \( x^2 \):<br>
+      \( x^2 + 8x - 20 = x^2 \implies 8x = 20 \implies x = 2,5 \).</p>
+
+      <h5 style="color: #007a3d; margin-bottom: 5px; margin-top: 15px;">Podpunkt c)</h5>
+      <p>Suma długości podstaw trapezu:<br>
+      \( a + b = 10 + (x + 2) + (x - 7) = 2x + 5 \)<br>
+      Wzór na pole trapezu:<br>
+      \( P = \frac{(a + b) \cdot h}{2} = \frac{(2x + 5) \cdot (x - 2)}{2} = \frac{2x^2 - 4x + 5x - 10}{2} = \frac{2x^2 + x - 10}{2} = x^2 + 0,5x - 5 \)<br>
+      Porównujemy z wartością \( x^2 \):<br>
+      \( x^2 + 0,5x - 5 = x^2 \implies 0,5x = 5 \implies x = 10 \).</p>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+let lastFocusedEditableZ6 = null;
+
+function getCardInputsZ6(card) {
+  let allInputs = [];
+  const editables = Array.from(card.querySelectorAll('.z6-math-editable'));
+  editables.forEach(el => {
+    if (!allInputs.includes(el)) allInputs.push(el);
+  });
+  return allInputs.filter(el => {
+    if (el.offsetWidth === 0) {
+      if (el.offsetHeight === 0) {
+        return false;
+      }
+    }
+    try {
+      const style = window.getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden') return false;
+    } catch (e) {}
+    return true;
+  });
+}
+
+function getActiveEditableZ6() {
+  if (lastFocusedEditableZ6) {
+    if (lastFocusedEditableZ6.offsetWidth !== 0) {
+      if (document.body.contains(lastFocusedEditableZ6)) {
+        return lastFocusedEditableZ6;
+      }
+    }
+  }
+  const activeCard = document.querySelector('.cke-arkusz-z6 .z6-card.active-card');
+  if (activeCard) {
+    const editFields = getCardInputsZ6(activeCard);
+    if (editFields.length !== 0) return editFields[0];
+  }
+  const containers = document.querySelectorAll('.cke-arkusz-z6');
+  if (containers.length !== 0) {
+    const lastContainer = containers[containers.length - 1];
+    const defaultEdit = lastContainer.querySelector('.z6-math-editable');
+    if (defaultEdit) {
+      if (defaultEdit.offsetWidth !== 0) {
+        const card = defaultEdit.closest('.z6-card');
+        if (card) card.classList.add('active-card');
+        return defaultEdit;
+      }
+    }
+  }
+  return null;
+}
+
+function ensureSelectionInEditableZ6(editable) {
+  editable.focus();
+  const sel = window.getSelection();
+  let needsRange = true;
+  if (sel.rangeCount !== 0) {
+    const range = sel.getRangeAt(0);
+    if (editable.contains(range.commonAncestorContainer)) {
+      needsRange = false;
+    }
+  }
+  if (needsRange) {
+    const range = document.createRange();
+    range.selectNodeContents(editable);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+}
+
+document.addEventListener('focusin', function(e) {
+  const target = e.target;
+  if (target) {
+    if (target.getAttribute('contenteditable') === 'true') {
+      if (target.closest('.cke-arkusz-z6')) {
+        lastFocusedEditableZ6 = target;
+        const card = target.closest('.z6-card');
+        if (card) {
+          const container = target.closest('.cke-arkusz-z6');
+          const allCards = container.querySelectorAll('.z6-card');
+          allCards.forEach(c => c.classList.remove('active-card'));
+          card.classList.add('active-card');
+        }
+      }
+    }
+  }
+});
+
+document.addEventListener('click', function(e) {
+  const target = e.target;
+  if (target && target.closest('.cke-arkusz-z6')) {
+    if (target.classList.contains('math-widget-whole') || 
+        target.classList.contains('math-widget-num') || 
+        target.classList.contains('math-widget-den')) {
+      
+      target.focus();
+      
+      const sel = window.getSelection();
+      if (sel) {
+        const range = document.createRange();
+        range.selectNodeContents(target);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    }
+  }
+});
+
+function insertMathWidgetZ6(type) {
+  const activeEdit = getActiveEditableZ6();
+  if (!activeEdit) return;
+
+  const mainContainer = activeEdit.closest('.z6-math-editable');
+  if (mainContainer && mainContainer.querySelector('.math-widget')) {
+    return; 
+  }
+  
+  ensureSelectionInEditableZ6(activeEdit);
+
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  range.deleteContents();
+
+  let widgetRoot = null;
+  let firstEditableChild = null;
+
+  if (type === 'frac') {
+    const fracSpan = document.createElement('span');
+    fracSpan.className = 'math-widget math-widget-frac';
+    fracSpan.setAttribute('contenteditable', 'false');
+
+    const numSpan = document.createElement('span');
+    numSpan.className = 'math-widget-num';
+    numSpan.setAttribute('contenteditable', 'true');
+    numSpan.setAttribute('placeholder', 'licz.');
+
+    const lineSpan = document.createElement('span');
+    lineSpan.className = 'math-widget-line';
+
+    const denSpan = document.createElement('span');
+    denSpan.className = 'math-widget-den';
+    denSpan.setAttribute('contenteditable', 'true');
+    denSpan.setAttribute('placeholder', 'mian.');
+
+    fracSpan.appendChild(numSpan);
+    fracSpan.appendChild(lineSpan);
+    fracSpan.appendChild(denSpan);
+
+    widgetRoot = fracSpan;
+    firstEditableChild = numSpan;
+
+  } else if (type === 'mixed') {
+    const mixedSpan = document.createElement('span');
+    mixedSpan.className = 'math-widget math-widget-mixed';
+    mixedSpan.setAttribute('contenteditable', 'false');
+
+    const wholeSpan = document.createElement('span');
+    wholeSpan.className = 'math-widget-whole';
+    wholeSpan.setAttribute('contenteditable', 'true');
+    wholeSpan.setAttribute('placeholder', 'całość');
+
+    const fracSpan = document.createElement('span');
+    fracSpan.className = 'math-widget-frac';
+    fracSpan.setAttribute('contenteditable', 'false');
+
+    const numSpan = document.createElement('span');
+    numSpan.className = 'math-widget-num';
+    numSpan.setAttribute('contenteditable', 'true');
+    numSpan.setAttribute('placeholder', 'licz.');
+
+    const lineSpan = document.createElement('span');
+    lineSpan.className = 'math-widget-line';
+
+    const denSpan = document.createElement('span');
+    denSpan.className = 'math-widget-den';
+    denSpan.setAttribute('contenteditable', 'true');
+    denSpan.setAttribute('placeholder', 'mian.');
+
+    fracSpan.appendChild(numSpan);
+    fracSpan.appendChild(lineSpan);
+    fracSpan.appendChild(denSpan);
+
+    mixedSpan.appendChild(wholeSpan);
+    mixedSpan.appendChild(fracSpan);
+
+    widgetRoot = mixedSpan;
+    firstEditableChild = wholeSpan;
+  }
+
+  if (widgetRoot) {
+    range.insertNode(widgetRoot);
+
+    if (firstEditableChild) {
+      const newRange = document.createRange();
+      newRange.selectNodeContents(firstEditableChild);
+      newRange.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+      firstEditableChild.focus();
+      lastFocusedEditableZ6 = firstEditableChild;
+    }
+  }
+}
+
+function insertTextAtCursorZ6(text) {
+  const activeEdit = getActiveEditableZ6();
+  if (!activeEdit) return;
+
+  ensureSelectionInEditableZ6(activeEdit);
+
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+
+  range.deleteContents();
+  const textNode = document.createTextNode(text);
+  range.insertNode(textNode);
+
+  range.setStartAfter(textNode);
+  range.setEndAfter(textNode);
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
+function clearActiveZ6() {
+  const activeEdit = getActiveEditableZ6();
+  if (activeEdit) {
+    activeEdit.innerHTML = '';
+    activeEdit.focus();
+  }
+}
+
+function parseEditableToValueZ6(editor) {
+  if (!editor) return null;
+
+  const cleanClone = editor.cloneNode(true);
+  const mathjaxGarbage = cleanClone.querySelectorAll('.MathJax_Preview, .MathJax, .MathJax_Display, script, math, svg, style');
+  mathjaxGarbage.forEach(function(el) { el.remove(); });
+
+  function cleanStr(s) {
+    if (!s) return "";
+    let cleaned = s.replace(/[\u200B\u200C\u200D\uFEFF]/g, '');
+    cleaned = cleaned.replace(/[\u00A0\s]/g, ''); 
+    cleaned = cleaned.replace(/,/g, '.');
+    cleaned = cleaned.replace(/[\u2212−–—]/g, '-');
+    cleaned = cleaned.replace(/[^0-9\.\-]/g, '');
+    return cleaned;
+  }
+
+  const rawText = (cleanClone.textContent || cleanClone.innerText || "").trim();
+  const isNegative = rawText.indexOf('-') !== -1 || 
+                     rawText.indexOf('\u2212') !== -1 || 
+                     rawText.indexOf('−') !== -1 || 
+                     rawText.indexOf('–') !== -1 || 
+                     rawText.indexOf('—') !== -1;
+
+  const wholeEl = cleanClone.querySelector('[placeholder="całość"]');
+  const numEl = cleanClone.querySelector('[placeholder="licz."]');
+  const denEl = cleanClone.querySelector('[placeholder="mian."]');
+
+  if (wholeEl && numEl && denEl) {
+    let whole = parseFloat(cleanStr(wholeEl.textContent || wholeEl.innerText || "0"));
+    let num = parseFloat(cleanStr(numEl.textContent || numEl.innerText || "0"));
+    let den = parseFloat(cleanStr(denEl.textContent || denEl.innerText || "1"));
+
+    if (isNaN(whole)) whole = 0;
+    if (isNaN(num)) num = 0;
+    if (isNaN(den) || den === 0) den = 1;
+
+    const absVal = Math.abs(whole) + (Math.abs(num) / Math.abs(den));
+    return isNegative ? -absVal : absVal;
+  }
+
+  if (numEl && denEl) {
+    let num = parseFloat(cleanStr(numEl.textContent || numEl.innerText || "0"));
+    let den = parseFloat(cleanStr(denEl.textContent || denEl.innerText || "1"));
+
+    if (isNaN(num)) num = 0;
+    if (isNaN(den) || den === 0) den = 1;
+
+    const absVal = Math.abs(num) / Math.abs(den);
+    return isNegative ? -absVal : absVal;
+  }
+
+  let cleanText = rawText.replace(/[\u00A0]/g, ' '); 
+  cleanText = cleanText.replace(/[\u200B\u200C\u200D\uFEFF]/g, '');
+  cleanText = cleanText.replace(/,/g, '.');
+  cleanText = cleanText.replace(/[\u2212−–—]/g, '-');
+  cleanText = cleanText.replace(/\s+/g, ' ').trim();
+
+  cleanText = cleanText.replace(/x\s*=\s*/gi, '');
+  cleanText = cleanText.replace(/x/gi, '');
+
+  if (!cleanText) return null;
+
+  const mixedPattern = new RegExp("^(-)?\\s*(\\d+)\\s+(\\d+)\\s*/\\s*(\\d+)$");
+  const mixedMatch = cleanText.match(mixedPattern);
+  if (mixedMatch) {
+    const sign = mixedMatch[1] ? -1 : 1;
+    const whole = parseFloat(mixedMatch[2]);
+    const num = parseFloat(mixedMatch[3]);
+    const den = parseFloat(mixedMatch[4]);
+    if (den !== 0) {
+      return sign * (whole + (num / den));
+    }
+  }
+
+  const fracPattern = new RegExp("^(-)?\\s*(\\d+)\\s*/\\s*(\\d+)$");
+  const fracMatch = cleanText.match(fracPattern);
+  if (fracMatch) {
+    const sign = fracMatch[1] ? -1 : 1;
+    const num = parseFloat(fracMatch[2]);
+    const den = parseFloat(fracMatch[3]);
+    if (den !== 0) {
+      return sign * (num / den);
+    }
+  }
+
+  const parsedVal = parseFloat(cleanStr(cleanText));
+  return isNaN(parsedVal) ? null : parsedVal;
+}
+
+function z6Verify(btn) {
+  const container = btn.closest('.cke-arkusz-z6');
+  if (!container) return;
+
+  let allCorrect = true;
+  const feedback = container.querySelector('.cke-feedback-z6');
+
+  const targetAnswers = {
+    a: 10/3, 
+    b: 2.5,
+    c: 10
+  };
+
+  const cards = container.querySelectorAll('.z6-card');
+  
+  Array.from(cards).forEach(function(card, index) {
+    let key = null;
+    if (card.classList.contains('z6-card-a')) key = 'a';
+    else if (card.classList.contains('z6-card-b')) key = 'b';
+    else if (card.classList.contains('z6-card-c')) key = 'c';
+    
+    if (!key) {
+      if (index === 0) key = 'a';
+      else if (index === 1) key = 'b';
+      else if (index === 2) key = 'c';
+    }
+
+    if (key && targetAnswers[key] !== undefined) {
+      const editField = card.querySelector('.z6-math-editable');
+      if (editField) {
+        editField.classList.remove('correct-input', 'incorrect-input');
+
+        const userVal = parseEditableToValueZ6(editField);
+        const targetVal = targetAnswers[key];
+
+        let isCorrect = false;
+
+        if (userVal !== null) {
+          const diff = Math.abs(userVal - targetVal);
+          if (diff <= 0.015) {
+            isCorrect = true;
+          }
+        }
+
+        if (isCorrect) {
+          editField.classList.add('correct-input');
+        } else {
+          editField.classList.add('incorrect-input');
+          allCorrect = false;
+        }
+      }
+    }
+  });
+
+  if (feedback) {
+    feedback.innerHTML = '';
+    const span = document.createElement('span');
+    if (allCorrect) {
+      span.style.color = '#27ae60';
+      span.textContent = 'Dobrze! Wszystkie równania geometryczne zostały prawidłowo rozwiązane.';
+    } else {
+      span.style.color = '#c0392b';
+      span.textContent = 'Niektóre odpowiedzi są błędne lub puste. Spróbuj jeszcze raz.';
+    }
+    feedback.appendChild(span);
+  }
+}
+
+function z6ToggleSolution(btn) {
+  const container = btn.closest('.cke-arkusz-z6');
+  if (!container) return;
+
+  const solBox = container.querySelector('.z6-solution-box');
+  if (solBox) {
+    const isHidden = solBox.style.display === 'none' || solBox.style.display === '';
+    if (isHidden) {
+      solBox.style.display = 'block';
+      btn.textContent = 'Ukryj wyjaśnienie';
+      
+      try {
+        if (typeof MathJax !== 'undefined') {
+          if (typeof MathJax.typesetPromise === 'function') {
+            MathJax.typesetPromise([solBox]);
+          } else if (typeof MathJax.Hub !== 'undefined') {
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, solBox]);
+          }
+        }
+      } catch (err) {}
+    } else {
+      solBox.style.display = 'none';
+      btn.textContent = 'Pokaż wyjaśnienie krok po kroku';
+    }
+  }
+}
+
+function initZ6Events() {
+  const container = document.querySelector('.cke-arkusz-z6');
+  if (!container) return;
+
+  const btnFrac = container.querySelector('.z6-btn-frac');
+  if (btnFrac) {
+    btnFrac.addEventListener('mousedown', function(e) { e.preventDefault(); });
+    btnFrac.addEventListener('click', function() { insertMathWidgetZ6('frac'); });
+  }
+
+  const btnMixed = container.querySelector('.z6-btn-mixed');
+  if (btnMixed) {
+    btnMixed.addEventListener('mousedown', function(e) { e.preventDefault(); });
+    btnMixed.addEventListener('click', function() { insertMathWidgetZ6('mixed'); });
+  }
+
+  const symbolBtns = container.querySelectorAll('.z6-symbol-btn');
+  symbolBtns.forEach(function(btn) {
+    btn.addEventListener('mousedown', function(e) { e.preventDefault(); });
+    btn.addEventListener('click', function() {
+      const text = btn.textContent.trim();
+      const isMinus = /[\u2212−–—\-]/.test(text);
+      const character = isMinus ? '\u2212' : text;
+      insertTextAtCursorZ6(character);
+    });
+  });
+
+  const btnClear = container.querySelector('.z6-btn-clear');
+  if (btnClear) {
+    btnClear.addEventListener('mousedown', function(e) { e.preventDefault(); });
+    btnClear.addEventListener('click', function() { clearActiveZ6(); });
+  }
+
+  const btnVerify = container.querySelector('.cke-btn-blue-z6');
+  if (btnVerify) {
+    btnVerify.addEventListener('click', function() { z6Verify(btnVerify); });
+  }
+
+  const btnSol = container.querySelector('.z6-btn-sol');
+  if (btnSol) {
+    btnSol.addEventListener('click', function() { z6ToggleSolution(btnSol); });
+  }
+}
+
+function initFocusZ6() {
+  const containers = document.querySelectorAll('.cke-arkusz-z6');
+  if (containers.length === 0) return;
+  const activeContainer = containers[containers.length - 1];
+
+  const defaultEdit = activeContainer.querySelector('.z6-math-editable');
+  if (defaultEdit) {
+    if (defaultEdit.offsetWidth > 0) {
+      defaultEdit.focus();
+      const card = defaultEdit.closest('.z6-card');
+      if (card) {
+        const allCards = activeContainer.querySelectorAll('.z6-card');
+        allCards.forEach(c => c.classList.remove('active-card'));
+        card.classList.add('active-card');
+      }
+    }
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    initZ6Events();
+    initFocusZ6();
+  });
+} else {
+  initZ6Events();
+  initFocusZ6();
+}
+
+window.addEventListener('load', function() {
+  initZ6Events();
+  initFocusZ6();
+});
+</script>
+
+</body>
+</html>
