@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Moderatora Komentarzy</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f1f5f9; padding: 25px; color: #1e293b; font-size: 15px; }
+    .panel-container { max-width: 850px; margin: 0 auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    h1 { font-size: 1.8em; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-top: 0; }
+    
+    .login-sec { margin-bottom: 25px; background-color: #f8fafc; padding: 20px; border-radius: 6px; border: 1px solid #cbd5e1; }
+    input[type="password"] { padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; width: 280px; font-size: 15px; margin-right: 10px; }
+    
+    /* Przyciski sterujące */
+    .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+    button { padding: 11px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: Arial, sans-serif; font-size: 14px; transition: background-color 0.2s; }
+    
+    .btn-primary { background-color: #0284c7; color: white; }
+    .btn-primary:hover { background-color: #0369a1; }
+    
+    .btn-secondary { background-color: #475569; color: white; }
+    .btn-secondary:hover { background-color: #334155; }
+    
+    .btn-approve { background-color: #22c55e; color: white; margin-right: 10px; }
+    .btn-approve:hover { background-color: #16a34a; }
+    
+    .btn-delete { background-color: #ef4444; color: white; }
+    .btn-delete:hover { background-color: #dc2626; }
+    
+    /* Karty komentarzy */
+    .comment-card { border: 1px solid #cbd5e1; padding: 20px; border-radius: 8px; margin-bottom: 25px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+    
+    /* Nowa Tabela Informacyjna (Metadane) */
+    .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-family: Arial, sans-serif; font-size: 15px; }
+    .meta-table td { padding: 10px 14px; border: 1px solid #cbd5e1; line-height: 1.4; }
+    .meta-label { background-color: #f8fafc; font-weight: bold; color: #475569; width: 25%; }
+    .meta-value { color: #1e293b; }
+    
+    .post-title-highlight { color: #0284c7; font-weight: bold; }
+    .task-id-highlight { font-weight: bold; color: #0f172a; }
+    
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 0.85em; font-weight: bold; }
+    .badge-pending { background-color: #fef3c7; color: #d97706; }
+    .badge-approved { background-color: #dcfce7; color: #15803d; }
+
+    /* Treść komentarza (większa czcionka) */
+    .content { font-size: 1.15em; color: #334155; margin-bottom: 15px; white-space: pre-wrap; line-height: 1.6; background-color: #f8fafc; padding: 15px; border-radius: 4px; border-left: 4px solid #cbd5e1; font-family: 'Georgia', serif; }
+  </style>
+</head>
+<body>
+
+<div class="panel-container">
+  <h1>Panel Moderacji Komentarzy</h1>
+  
+  <div class="login-sec">
+    <label style="font-weight:bold; display:block; margin-bottom: 8px; font-family: Arial, sans-serif; font-size: 15px;">Konfiguracja i dostęp:</label>
+    <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+      <input type="password" id="admin-pass" placeholder="Wpisz hasło moderacji...">
+    </div>
+    
+    <div class="btn-group">
+      <button class="btn-primary" onclick="loadUnapproved()">1. Pokaż oczekujące (niezatwierdzone)</button>
+      <button class="btn-secondary" onclick="loadApproved()">2. Pokaż opublikowane (zatwierdzone)</button>
+    </div>
+  </div>
+
+  <div id="status-msg" style="font-weight: bold; margin-bottom: 15px; color: #0284c7; font-family: Arial, sans-serif; font-size: 16px;"></div>
+  <div id="comments-list"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Dane dostępowe Supabase (uzupełnione automatycznie):
+  const SUPABASE_URL = "https://cdtvafmqcgfupouxxncj.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_ejhbGmEhRkrnlLUtuU_6kw_Q_4WGnZj";
+
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  function getPass() {
+    return document.getElementById('admin-pass').value.trim();
+  }
+
+  // Wczytywanie niezatwierdzonych
+  async function loadUnapproved() {
+    const listDiv = document.getElementById('comments-list');
+    const status = document.getElementById('status-msg');
+    const pass = getPass();
+
+    if (!pass) {
+      alert("Wpisz najpierw hasło moderacji!");
+      return;
+    }
+
+    status.innerText = "Wczytywanie komentarzy oczekujących...";
+    listDiv.innerHTML = "";
+
+    try {
+      const { data, error } = await supabaseClient.rpc('get_unapproved_comments', { admin_pass: pass });
+
+      if (error) throw error;
+
+      status.innerText = `Liczba komentarzy oczekujących na zatwierdzenie: ${data.length}`;
+
+      if (data.length === 0) {
+        listDiv.innerHTML = '<p style="color: #22c55e; font-style: italic; font-weight: bold; font-family: Arial, sans-serif;">Brak komentarzy oczekujących na zatwierdzenie. Wszystko jest na bieżąco!</p>';
+        return;
+      }
+
+      renderList(data, false);
+
+    } catch (err) {
+      status.innerText = "";
+      alert("Błąd wczytywania: " + err.message);
+    }
+  }
+
+  // Wczytywanie opublikowanych
+  async function loadApproved() {
+    const listDiv = document.getElementById('comments-list');
+    const status = document.getElementById('status-msg');
+    const pass = getPass();
+
+    if (!pass) {
+      alert("Wpisz hasło moderacji, aby wyświetlić opublikowane komentarze!");
+      return;
+    }
+
+    status.innerText = "Wczytywanie opublikowanych komentarzy...";
+    listDiv.innerHTML = "";
+
+    try {
+      const { data, error } = await supabaseClient
+        .from('comments')
+        .select('*')
+        .eq('approved', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      status.innerText = `Liczba opublikowanych komentarzy: ${data.length}`;
+
+      if (data.length === 0) {
+        listDiv.innerHTML = '<p style="color: #64748b; font-style: italic; font-family: Arial, sans-serif;">Brak opublikowanych komentarzy na blogu.</p>';
+        return;
+      }
+
+      renderList(data, true);
+
+    } catch (err) {
+      status.innerText = "";
+      alert("Błąd wczytywania: " + err.message);
+    }
+  }
+
+  // Renderowanie tabeli oraz podglądu załącznika wewnątrz karty
+  function renderList(comments, isApprovedList) {
+    const listDiv = document.getElementById('comments-list');
+    
+    listDiv.innerHTML = comments.map(c => {
+      const date = new Date(c.created_at).toLocaleString('pl-PL');
+      const badge = isApprovedList 
+        ? '<span class="badge badge-approved">Opublikowany</span>' 
+        : '<span class="badge badge-pending">Oczekuje</span>';
+        
+      const actionButtons = isApprovedList
+        ? `<button class="btn-delete" onclick="deleteComment(${c.id})">Usuń i wycofaj z bloga</button>`
+        : `
+          <button class="btn-approve" onclick="approveComment(${c.id})">Zatwierdź i opublikuj</button>
+          <button class="btn-delete" onclick="deleteComment(${c.id})">Odrzuć i usuń</button>
+        `;
+
+      // Logika załączników
+      let attachmentHtml = '';
+      if (c.attachment_url) {
+        const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(c.attachment_url);
+        if (isImage) {
+          attachmentHtml = `
+            <div style="margin-top: 15px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
+              <strong style="font-size:0.9em; color:#475569; display:block; margin-bottom:8px; font-family: Arial, sans-serif;">Przesłany obraz:</strong>
+              <a href="${c.attachment_url}" target="_blank">
+                <img src="${c.attachment_url}" style="max-width: 100%; max-height: 250px; border-radius: 4px; border: 1px solid #cbd5e1;" alt="Załącznik">
+              </a>
+            </div>`;
+        } else {
+          attachmentHtml = `
+            <div style="margin-top: 15px; border-top: 1px dashed #cbd5e1; padding-top: 15px; font-size: 0.95em; font-family: Arial, sans-serif;">
+              📎 <a href="${c.attachment_url}" target="_blank" style="color: #0284c7; font-weight: bold; text-decoration: none;">Pobierz załączony dokument (PDF/Word)</a>
+            </div>`;
+        }
+      }
+
+      return `
+        <div class="comment-card" id="comment-${c.id}">
+          
+          <!-- Uporządkowana tabela informacyjna -->
+          <table class="meta-table">
+            <tr>
+              <td class="meta-label">Lekcja / Post:</td>
+              <td class="meta-value post-title-highlight">${escapeHtml(c.post_title || 'Brak tytułu')}</td>
+            </tr>
+            <tr>
+              <td class="meta-label">Zadanie na poście:</td>
+              <td class="meta-value task-id-highlight">${escapeHtml(c.task_id)}</td>
+            </tr>
+            <tr>
+              <td class="meta-label">Autor:</td>
+              <td class="meta-value" style="font-weight: bold;">${escapeHtml(c.author)}</td>
+            </tr>
+            <tr>
+              <td class="meta-label">Data przesłania:</td>
+              <td class="meta-value">${date}</td>
+            </tr>
+            <tr>
+              <td class="meta-label">Status:</td>
+              <td class="meta-value">${badge}</td>
+            </tr>
+          </table>
+          
+          <div style="font-weight: bold; margin-bottom: 6px; font-family: Arial, sans-serif; font-size: 0.9em; color: #475569;">Treść wypowiedzi:</div>
+          <div class="content">${escapeHtml(c.content)}</div>
+          
+          ${attachmentHtml}
+          
+          <div style="margin-top: 20px;">
+            ${actionButtons}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function approveComment(id) {
+    const pass = getPass();
+    try {
+      const { error } = await supabaseClient.rpc('approve_comment', { comment_id: id, admin_pass: pass });
+      if (error) throw error;
+      document.getElementById(`comment-${id}`).remove();
+    } catch (err) {
+      alert("Błąd podczas zatwierdzania: " + err.message);
+    }
+  }
+
+  async function deleteComment(id) {
+    if (!confirm("Czy na pewno chcesz bezpowrotnie usunąć ten komentarz wraz z załącznikiem?")) return;
+    const pass = getPass();
+    try {
+      const { error } = await supabaseClient.rpc('delete_comment', { comment_id: id, admin_pass: pass });
+      if (error) throw error;
+      document.getElementById(`comment-${id}`).remove();
+    } catch (err) {
+      alert("Błąd podczas usuwania: " + err.message);
+    }
+  }
+
+  function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return text.replace(/[&<>"']/g, m => map[m]);
+  }
+</script>
+</body>
+</html>
